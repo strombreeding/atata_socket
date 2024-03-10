@@ -11,6 +11,9 @@ const httpServer = http.createServer(app);
 const io = new SocketServer(httpServer);
 app.use(cors());
 
+app.get("/", (req, res) => {
+  return res.send("hello world");
+});
 let waitingUsers = [];
 /* 
   아래 타입
