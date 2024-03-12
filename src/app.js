@@ -27,8 +27,6 @@ let waitingUsers = [];
 let matchingRoom = []; //
 // 클라이언트가 연결되었을 때 실행되는 이벤트 리스너
 io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id);
-  console.log(socket.rooms);
   socket.on("joinQueue", () => {
     waitingUsers.push(socket);
     if (waitingUsers.length >= 2) {
@@ -42,24 +40,43 @@ io.on("connection", (socket) => {
       user2.emit("matchFound", roomId);
     }
   });
+
   socket.on("acceptMatch", (id) => {
+    //
     const idx = matchingRoom.indexOf(id);
     socket.join(id);
     const acceptCnt = io.sockets.adapter.rooms.get(id);
+    console.log("수락", io.sockets.adapter.rooms.get(id));
     if (acceptCnt && acceptCnt.size >= 2) {
-      console.log("수락", acceptCnt);
+      // ㅇㅋ 둘다 수락 이동해.
       socket.to(id).emit("welcome");
-      socket.emit("acceptMatch");
+      socket.to(id).emit("goBang");
+      socket.emit("goBang"); // 이동하라는 emit 보내기
     } else if (idx < 0) {
       socket.emit("cancelMatch");
-      socket.rooms.delete(id);
-      console.log("실패", socket.rooms, acceptCnt);
+      // socket.rooms.delete(id);
+      io.sockets.adapter.rooms.delete(id);
+      console.log(
+        "유저가 취소하거나 이동함 ",
+        io.sockets.adapter.rooms.get(id)
+      );
     }
   });
+
+  socket.on("moveToBangDone", (id) => {
+    console.log("오 잘 왔네 ㅋㅋ");
+    socket.join(id);
+    const acceptCnt = io.sockets.adapter.rooms.get(id);
+    if (acceptCnt.size >= 2) {
+      socket.to(id).emit("welcome");
+    }
+  });
+
   socket.on("cancelMatch", (id) => {
     const idx = matchingRoom.indexOf(id);
     matchingRoom.splice(idx, 1);
-    // socket.rooms.delete(id);
+    socket.rooms.delete(id);
+    console.log("방에 남은 유저 ", io.sockets.adapter.rooms.get(id));
     socket.to(id).emit("cancelMatch");
     // waitingUsers.push(socket);
   });
@@ -86,9 +103,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (id) => {
-    console.log(socket.id, id);
     waitingUsers = waitingUsers.filter((user) => user !== socket);
-    console.log("커넥해제", waitingUsers);
+    console.log("커넥해제", matchingRoom);
   });
 });
 
