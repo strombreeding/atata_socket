@@ -73,11 +73,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("cancelMatch", (id) => {
+    console.log("취소할테니 룸에다가 전해줘");
     const idx = matchingRoom.indexOf(id);
+    socket.to(id).emit("cancelMatch");
     matchingRoom.splice(idx, 1);
     socket.rooms.delete(id);
-    console.log("방에 남은 유저 ", io.sockets.adapter.rooms.get(id));
-    socket.to(id).emit("cancelMatch");
     // waitingUsers.push(socket);
   });
 
