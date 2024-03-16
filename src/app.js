@@ -28,6 +28,7 @@ let matchingRoom = []; //
 // 클라이언트가 연결되었을 때 실행되는 이벤트 리스너
 io.on("connection", (socket) => {
   socket.on("joinQueue", () => {
+    console.log("큐잡기");
     waitingUsers.push(socket);
     if (waitingUsers.length >= 2) {
       // Matchmaking
