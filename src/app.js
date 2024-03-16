@@ -42,11 +42,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("acceptMatch", (id) => {
-    //
+    console.log("입장", id);
     const idx = matchingRoom.indexOf(id);
     socket.join(id);
     const acceptCnt = io.sockets.adapter.rooms.get(id);
-    console.log("수락", io.sockets.adapter.rooms.get(id));
     if (acceptCnt && acceptCnt.size >= 2) {
       // ㅇㅋ 둘다 수락 이동해.
       socket.to(id).emit("welcome");
@@ -73,8 +72,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("cancelMatch", (id) => {
-    console.log("취소할테니 룸에다가 전해줘");
+    console.log("취소 ", id);
     const idx = matchingRoom.indexOf(id);
+    socket.join(id);
     socket.to(id).emit("cancelMatch");
     matchingRoom.splice(idx, 1);
     socket.rooms.delete(id);
