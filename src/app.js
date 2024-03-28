@@ -23,6 +23,7 @@ let matchingRoom = []; //
 io.on("connection", (socket) => {
   socket.on("joinQueue", async ({ id, nickname }) => {
     const res = await axios.get("http://localhost:8080/user/one/" + id);
+    console.log("큐잡기");
     waitingUsers.push(socket);
     waitPropsList.push({
       nickname: res.data.nickname,
