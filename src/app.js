@@ -29,6 +29,8 @@ io.on("connection", (socket) => {
       nickname: res.data.nickname,
       bounti: res.data.bounti,
     });
+    console.log(waitPropsList);
+
     if (waitingUsers.length >= 2) {
       // Matchmaking
       const user1 = waitingUsers.shift();
@@ -38,8 +40,8 @@ io.on("connection", (socket) => {
       const roomId = randomUUID();
       matchingRoom.push(roomId);
       // Emit message to users for connection
-      user1.emit("matchFound", { roomId, targetProps: userProp2 });
-      user2.emit("matchFound", { roomId, targetProps: userProp1 });
+      user1.emit("matchFound", { roomId, userList: [userProp1, userProp2] });
+      user2.emit("matchFound", { roomId, userList: [userProp1, userProp2] });
     }
   });
 
