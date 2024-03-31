@@ -17,12 +17,14 @@ app.get("/", (req, res) => {
 });
 let waitingUsers = [];
 
+const SERVER_URL = "https://jinytree.store/api/";
+
 const waitPropsList = [];
 let matchingRoom = []; //
 // 클라이언트가 연결되었을 때 실행되는 이벤트 리스너
 io.on("connection", (socket) => {
   socket.on("joinQueue", async ({ id, nickname }) => {
-    const res = await axios.get("http://localhost:8080/user/one/" + id);
+    const res = await axios.get(SERVER_URL + "user/one/" + id);
     console.log("큐잡기");
     waitingUsers.push(socket);
     waitPropsList.push({
