@@ -31,7 +31,8 @@ io.on("connection", (socket) => {
       nickname: res.data.nickname,
       bounti: res.data.bounti,
     });
-    console.log(waitPropsList);
+    console.log("대기자 명단 : ", waitPropsList);
+    console.log("소켓 대기열 : ", waitingUsers.length);
 
     if (waitingUsers.length >= 2) {
       // Matchmaking
@@ -57,7 +58,6 @@ io.on("connection", (socket) => {
     console.log(idx);
     if (idx < 0) {
       socket.emit("cancelMatch");
-      // socket.rooms.delete(id);
       io.sockets.adapter.rooms.delete(id);
       console.log(
         "유저가 취소하거나 이동함 ",
@@ -80,14 +80,18 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("cancelMatch", (id) => {
-    console.log("취소 ", id);
-    const idx = matchingRoom.indexOf(id);
-    socket.join(id);
-    socket.to(id).emit("cancelMatch");
+  socket.on("cancelMatch", (payload) => {
+    console.log("취소 ", payload);
+    const idx = matchingRoom.indexOf(payload.id);
+    socket.join(payload.id);
+    socket.to(payload.id).emit("cancelMatch");
     matchingRoom.splice(idx, 1);
-    socket.rooms.delete(id);
-    io.sockets.adapter.rooms.get(id);
+    socket.rooms.delete(payload.id);
+    io.sockets.adapter.rooms.get(payload.id);
+    const waitPropsListIdx = waitPropsList.findIndex(
+      (item) => item.nickname === payload.nickname
+    );
+    waitPropsList.splice(waitPropsListIdx, 1);
 
     // waitingUsers.push(socket);
   });
