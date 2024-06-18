@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 });
 let waitingUsers = [];
 
-const SERVER_URL = "https://jinytree.store/api/";
+const SERVER_URL = "https://db.jinytree.site/api/";
 
 const waitPropsList = [];
 let matchingRoom = []; //
